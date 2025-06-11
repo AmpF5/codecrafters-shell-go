@@ -27,7 +27,8 @@ func main() {
 			continue
 		}
 
-		if command[0] == "exit" {
+		switch command[0] {
+		case "exit":
 			if commandLen == 1 {
 				fmt.Println("Missing parameter")
 				continue
@@ -38,6 +39,8 @@ func main() {
 			} else {
 				fmt.Println("Invalid parameter, use 0 to exit")
 			}
+		default:
+			fmt.Printf("%s: commmand not found\n", command[0])
 		}
 	}
 }
