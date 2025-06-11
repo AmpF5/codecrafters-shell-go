@@ -40,7 +40,7 @@ func main() {
 				fmt.Println("Invalid parameter, use 0 to exit")
 			}
 		default:
-			fmt.Printf("%s: commmand not found\n", command[0])
+			fmt.Printf("%s: command not found\n", command[0])
 		}
 	}
 }
