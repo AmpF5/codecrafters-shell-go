@@ -1,12 +1,16 @@
 package commands
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type echoCommand struct {
 	value string
 }
 
 func CreateEchoCommand(query string) *echoCommand {
+	query = strings.TrimLeft(query, " ")
 	return &echoCommand{value: query}
 }
 
