@@ -23,6 +23,6 @@ func (bc *typeCommand) Execute() {
 	if _, exists := commandName[bc.method]; exists {
 		fmt.Printf("%v is a shell builtin\n", bc.method)
 	} else {
-		fmt.Printf("%s: command not found\n", bc.method)
+		fmt.Printf("%s: not found\n", bc.method)
 	}
 }
