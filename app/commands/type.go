@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -19,10 +20,32 @@ func CreateTypeCommand(query string) *typeCommand {
 	return &typeCommand{method: params[0]}
 }
 
-func (bc *typeCommand) Execute() {
-	if _, exists := commandName[bc.method]; exists {
-		fmt.Printf("%v is a shell builtin\n", bc.method)
+func (tc *typeCommand) Execute() {
+	if _, exists := commandName[tc.method]; exists {
+		fmt.Printf("%v is a shell builtin\n", tc.method)
 	} else {
-		fmt.Printf("%s: not found\n", bc.method)
+		file, notFound := getPathEntries(tc.method)
+		if notFound {
+			fmt.Printf("%s: not found\n", tc.method)
+		} else {
+			fmt.Printf("%v is %v", tc.method, file)
+		}
 	}
+}
+
+func getPathEntries(method string) (string, bool) {
+	path := os.Getenv("PATH")
+	// path, ok := os.LookupEnv("PATH")
+	if path == "" {
+		panic("PATH environment variable is not set or empty")
+	}
+
+	for dir := range strings.SplitSeq(path, string(os.PathListSeparator)) {
+		file := dir + "/" + method
+		if _, err := os.Stat(file); err == nil {
+			return file, false
+		}
+	}
+
+	return "", true
 }
