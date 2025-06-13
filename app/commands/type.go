@@ -28,7 +28,7 @@ func (tc *typeCommand) Execute() {
 		if notFound {
 			fmt.Printf("%s: not found\n", tc.method)
 		} else {
-			fmt.Printf("%v is %v", tc.method, file)
+			fmt.Printf("%v is %v\n", tc.method, file)
 		}
 	}
 }
