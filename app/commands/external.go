@@ -12,8 +12,9 @@ type externalCommand struct {
 }
 
 func CreateExternalCommnad(method, arguments string) *externalCommand {
+	methodFromPath := strings.Split(method, "/")
 	return &externalCommand{
-		method:    method,
+		method:    methodFromPath[len(methodFromPath)-1],
 		arguments: arguments,
 	}
 }
