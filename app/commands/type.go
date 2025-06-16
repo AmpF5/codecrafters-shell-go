@@ -26,6 +26,7 @@ func (tc *typeCommand) Execute() {
 		path, found := getPathEntry(tc.method)
 		if !found {
 			fmt.Printf("%s: not found\n", tc.method)
+			return
 		}
 
 		fmt.Printf("%v is %v\n", tc.method, path)
