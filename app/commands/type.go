@@ -25,7 +25,7 @@ func (tc *typeCommand) Execute() {
 	} else {
 		path, found := getPathEntry(tc.method)
 		if !found {
-			panic(fmt.Sprintf("%s: command not found", tc.method))
+			fmt.Printf("%s: not found", tc.method)
 		}
 
 		fmt.Printf("%v is %v\n", tc.method, path)
