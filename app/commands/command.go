@@ -3,6 +3,8 @@ package commands
 import (
 	"errors"
 	"fmt"
+	"os"
+	"os/exec"
 )
 
 type command interface {
@@ -41,7 +43,27 @@ func CreateCommand(command, query string) (command, error) {
 		bc := CreateTypeCommand(query)
 		return bc, nil
 	default:
-		fmt.Printf("%s: command not found\n", command)
-		return nil, errors.New("")
+		method, found := getPathEntry(command)
+		if !found {
+			fmt.Printf("%s: command not found\n", command)
+			return nil, errors.New("")
+		}
+
+		ec := CreateExternalCommnad(method, query)
+		return ec, nil
 	}
+}
+
+func getPathEntry(method string) (string, bool) {
+	path := os.Getenv("PATH")
+	if path == "" {
+		return "", false
+	}
+
+	file, err := exec.LookPath(method)
+	if err != nil {
+		return "", false
+	}
+
+	return file, true
 }

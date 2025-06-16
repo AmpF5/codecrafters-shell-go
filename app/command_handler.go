@@ -26,6 +26,8 @@ func handleCommand(command string) {
 		return
 	}
 
+	query = strings.TrimSpace(query)
+
 	if commandHandle, _ := commands.CreateCommand(method, query); commandHandle != nil {
 		commandHandle.Execute()
 	}
