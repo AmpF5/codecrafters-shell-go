@@ -24,9 +24,4 @@ func (ec *externalCommand) Execute() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
-	// if err != nil {
-	// 	panic("Cannot execute external command: " + ec.method + " " + ec.arguments)
-	// }
-
-	// fmt.Printf("%s\n", out)
 }

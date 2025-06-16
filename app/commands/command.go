@@ -17,18 +17,21 @@ const (
 	ExitCommand = iota
 	EchoCommand
 	TypeCommand
+	PwdCommand
 )
 
 var commandType = map[CommandType]string{
 	ExitCommand: "exit",
 	EchoCommand: "echo",
 	TypeCommand: "type",
+	PwdCommand:  "pwd",
 }
 
 var commandName = map[string]CommandType{
 	"exit": ExitCommand,
 	"echo": EchoCommand,
 	"type": TypeCommand,
+	"pwd":  PwdCommand,
 }
 
 func CreateCommand(command, query string) (command, error) {
@@ -42,6 +45,9 @@ func CreateCommand(command, query string) (command, error) {
 	case "type":
 		bc := CreateTypeCommand(query)
 		return bc, nil
+	case "pwd":
+		pwdc := CreatePwdCommand()
+		return pwdc, nil
 	default:
 		method, found := getPathEntry(command)
 		if !found {
