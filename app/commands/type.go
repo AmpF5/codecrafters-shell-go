@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/codecrafters-io/shell-starter-go/app/helpers"
 )
@@ -11,14 +10,12 @@ type typeCommand struct {
 	method string
 }
 
-func CreateTypeCommand(query string) *typeCommand {
-	params := strings.Fields(query)
-
-	if len(params) != 1 {
+func CreateTypeCommand(query []string) *typeCommand {
+	if len(query) != 1 {
 		panic("Invalid parameter for type command, use a single word")
 	}
 
-	return &typeCommand{method: params[0]}
+	return &typeCommand{method: query[0]}
 }
 
 func (tc *typeCommand) Execute() {

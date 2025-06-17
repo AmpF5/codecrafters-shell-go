@@ -9,8 +9,8 @@ type cdCommand struct {
 	path string
 }
 
-func CreateCdCommand(path string) *cdCommand {
-	return &cdCommand{path: path}
+func CreateCdCommand(path []string) *cdCommand {
+	return &cdCommand{path: path[0]}
 }
 
 func (cc *cdCommand) Execute() {

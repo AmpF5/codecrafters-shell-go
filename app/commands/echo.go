@@ -9,9 +9,8 @@ type echoCommand struct {
 	value string
 }
 
-func CreateEchoCommand(query string) *echoCommand {
-	query = strings.TrimLeft(query, " ")
-	return &echoCommand{value: query}
+func CreateEchoCommand(query []string) *echoCommand {
+	return &echoCommand{value: strings.Join(query, " ")}
 }
 
 func (ec echoCommand) Execute() {

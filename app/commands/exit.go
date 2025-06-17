@@ -3,17 +3,15 @@ package commands
 import (
 	"os"
 	"strconv"
-	"strings"
 )
 
 type exitCommand struct {
 	number int
 }
 
-func CreateExitCommand(query string) *exitCommand {
-	params := strings.Fields(query)
+func CreateExitCommand(query []string) *exitCommand {
 
-	num, err := strconv.Atoi(params[0])
+	num, err := strconv.Atoi(query[0])
 	if err != nil {
 		panic("Invalid parameter for exit command, use 0 to exit")
 	}

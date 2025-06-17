@@ -27,9 +27,9 @@ func handleCommand(command string) {
 		return
 	}
 
-	arguments = helpers.SanetizeArguments(arguments)
+	argumentsSanetized := helpers.SanetizeArguments(arguments)
 
-	if commandHandle, _ := commands.CreateCommand(method, arguments); commandHandle != nil {
+	if commandHandle, _ := commands.CreateCommand(method, argumentsSanetized); commandHandle != nil {
 		commandHandle.Execute()
 	}
 }

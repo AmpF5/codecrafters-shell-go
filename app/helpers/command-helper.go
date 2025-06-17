@@ -20,13 +20,9 @@ func GetPathEntry(method string) (string, bool) {
 	return file, true
 }
 
-func SanetizeArguments(arguments string) string {
+func SanetizeArguments(arguments string) []string {
 	arguments = strings.TrimSpace(arguments)
-	arguments = sanetize(arguments)
-	// arguments = sanetizeMultipleSpaces(arguments)
-	// arguments, _ = sanetizeSingleQuotes(arguments)
-
-	return arguments
+	return sanetize(arguments)
 }
 
 func sanetizeSingleQuotes(arguments string) (string, bool) {
@@ -47,7 +43,7 @@ func isSingleQuote(c rune) bool {
 	return c == '\''
 }
 
-func sanetize(arguments string) string {
+func sanetize(arguments string) []string {
 	var tokens strings.Builder
 	var values []string
 
@@ -66,7 +62,7 @@ func sanetize(arguments string) string {
 		}
 
 		if char == ' ' && isInSingleQuote {
-			tokens.WriteRune(char)
+			tokens.WriteRune(' ')
 			continue
 		} else if char == ' ' {
 			push()
@@ -76,5 +72,5 @@ func sanetize(arguments string) string {
 	}
 	push()
 
-	return strings.Join(values, " ")
+	return values
 }

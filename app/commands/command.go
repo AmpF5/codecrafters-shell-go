@@ -37,7 +37,7 @@ var commandName = map[string]CommandType{
 	"cd":   CdCommand,
 }
 
-func CreateCommand(command, query string) (command, error) {
+func CreateCommand(command string, query []string) (command, error) {
 	switch command {
 	case "exit":
 		ec := CreateExitCommand(query)
