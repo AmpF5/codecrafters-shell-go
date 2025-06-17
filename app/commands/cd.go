@@ -14,8 +14,17 @@ func CreateCdCommand(path string) *cdCommand {
 }
 
 func (cc *cdCommand) Execute() {
-	err := os.Chdir(cc.path)
-	if err != nil {
-		fmt.Printf("cd: %v: No such file or directory\n", cc.path)
+	if cc.path == "~" {
+		path, err := os.UserHomeDir()
+		if err != nil {
+			panic(fmt.Sprintf("Error getting user home directory: %v", err))
+		}
+
+		os.Chdir(path)
+	} else {
+		err := os.Chdir(cc.path)
+		if err != nil {
+			fmt.Printf("cd: %v: No such file or directory\n", cc.path)
+		}
 	}
 }
