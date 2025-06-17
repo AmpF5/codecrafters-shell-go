@@ -55,13 +55,20 @@ func sanetize(arguments string) []string {
 	}
 
 	isInSingleQuote := false
+	isInDoubleQuote := false
+
 	for _, char := range arguments {
 		if char == '\'' {
 			isInSingleQuote = !isInSingleQuote
 			continue
 		}
 
-		if char == ' ' && isInSingleQuote {
+		if char == '"' {
+			isInDoubleQuote = !isInDoubleQuote
+			continue
+		}
+
+		if char == ' ' && (isInSingleQuote || isInDoubleQuote) {
 			tokens.WriteRune(' ')
 			continue
 		} else if char == ' ' {
