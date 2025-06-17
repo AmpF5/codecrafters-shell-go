@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/codecrafters-io/shell-starter-go/app/commands"
+	"github.com/codecrafters-io/shell-starter-go/app/helpers"
 )
 
 func handleCommand(command string) {
@@ -20,15 +21,18 @@ func handleCommand(command string) {
 
 	method := parameters[0]
 
-	query, found := strings.CutPrefix(command, method)
+	arguments, found := strings.CutPrefix(command, method)
 	if !found {
 		fmt.Printf("%s: command not found\n", method)
 		return
 	}
 
-	query = strings.TrimSpace(query)
+	arguments = strings.TrimSpace(arguments)
+	san, _ := helpers.SanetizeSingleQuotes(arguments)
 
-	if commandHandle, _ := commands.CreateCommand(method, query); commandHandle != nil {
+	arguments = san
+
+	if commandHandle, _ := commands.CreateCommand(method, arguments); commandHandle != nil {
 		commandHandle.Execute()
 	}
 }

@@ -3,6 +3,8 @@ package commands
 import (
 	"fmt"
 	"strings"
+
+	"github.com/codecrafters-io/shell-starter-go/app/helpers"
 )
 
 type typeCommand struct {
@@ -23,7 +25,7 @@ func (tc *typeCommand) Execute() {
 	if _, exists := commandName[tc.method]; exists {
 		fmt.Printf("%v is a shell builtin\n", tc.method)
 	} else {
-		path, found := getPathEntry(tc.method)
+		path, found := helpers.GetPathEntry(tc.method)
 		if !found {
 			fmt.Printf("%s: not found\n", tc.method)
 			return
