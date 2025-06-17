@@ -18,6 +18,7 @@ const (
 	EchoCommand
 	TypeCommand
 	PwdCommand
+	CdCommand
 )
 
 var commandType = map[CommandType]string{
@@ -25,6 +26,7 @@ var commandType = map[CommandType]string{
 	EchoCommand: "echo",
 	TypeCommand: "type",
 	PwdCommand:  "pwd",
+	CdCommand:   "cd",
 }
 
 var commandName = map[string]CommandType{
@@ -32,6 +34,7 @@ var commandName = map[string]CommandType{
 	"echo": EchoCommand,
 	"type": TypeCommand,
 	"pwd":  PwdCommand,
+	"cd":   CdCommand,
 }
 
 func CreateCommand(command, query string) (command, error) {
@@ -48,6 +51,9 @@ func CreateCommand(command, query string) (command, error) {
 	case "pwd":
 		pwdc := CreatePwdCommand()
 		return pwdc, nil
+	case "cd":
+		cc := CreateCdCommand(query)
+		return cc, nil
 	default:
 		method, found := getPathEntry(command)
 		if !found {
