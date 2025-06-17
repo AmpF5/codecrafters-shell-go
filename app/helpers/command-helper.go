@@ -25,24 +25,6 @@ func SanetizeArguments(arguments string) []string {
 	return sanetize(arguments)
 }
 
-func sanetizeSingleQuotes(arguments string) (string, bool) {
-	if strings.Count(arguments, "'")%2 == 0 {
-		return strings.ReplaceAll(arguments, "'", ""), true
-	}
-
-	return arguments, false
-}
-
-func sanetizeMultipleSpaces(arguments string) string {
-	// singleQuotesValues := strings.FieldsFunc(arguments, isSingleQuote)
-	// strings.FieldsFuncSeq
-	return strings.Join(strings.FieldsFunc(arguments, isSingleQuote), "")
-}
-
-func isSingleQuote(c rune) bool {
-	return c == '\''
-}
-
 func sanetize(arguments string) []string {
 	var tokens strings.Builder
 	var values []string
@@ -58,12 +40,12 @@ func sanetize(arguments string) []string {
 	isInDoubleQuote := false
 
 	for _, char := range arguments {
-		if char == '\'' {
+		if char == '\'' && !isInDoubleQuote {
 			isInSingleQuote = !isInSingleQuote
 			continue
 		}
 
-		if char == '"' {
+		if char == '"' && !isInSingleQuote {
 			isInDoubleQuote = !isInDoubleQuote
 			continue
 		}
