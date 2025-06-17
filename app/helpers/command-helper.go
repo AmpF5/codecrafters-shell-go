@@ -22,8 +22,9 @@ func GetPathEntry(method string) (string, bool) {
 
 func SanetizeArguments(arguments string) string {
 	arguments = strings.TrimSpace(arguments)
-	arguments = sanetizeMultipleSpaces(arguments)
-	arguments, _ = sanetizeSingleQuotes(arguments)
+	arguments = sanetize(arguments)
+	// arguments = sanetizeMultipleSpaces(arguments)
+	// arguments, _ = sanetizeSingleQuotes(arguments)
 
 	return arguments
 }
@@ -37,5 +38,43 @@ func sanetizeSingleQuotes(arguments string) (string, bool) {
 }
 
 func sanetizeMultipleSpaces(arguments string) string {
-	return strings.Join(strings.Fields(arguments), " ")
+	// singleQuotesValues := strings.FieldsFunc(arguments, isSingleQuote)
+	// strings.FieldsFuncSeq
+	return strings.Join(strings.FieldsFunc(arguments, isSingleQuote), "")
+}
+
+func isSingleQuote(c rune) bool {
+	return c == '\''
+}
+
+func sanetize(arguments string) string {
+	var tokens strings.Builder
+	var values []string
+
+	push := func() {
+		if tokens.Len() > 0 {
+			values = append(values, tokens.String())
+			tokens.Reset()
+		}
+	}
+
+	isInSingleQuote := false
+	for _, char := range arguments {
+		if char == '\'' {
+			isInSingleQuote = !isInSingleQuote
+			continue
+		}
+
+		if char == ' ' && isInSingleQuote {
+			tokens.WriteRune(char)
+			continue
+		} else if char == ' ' {
+			push()
+		} else {
+			tokens.WriteRune(char)
+		}
+	}
+	push()
+
+	return strings.Join(values, " ")
 }
