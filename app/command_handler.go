@@ -27,10 +27,7 @@ func handleCommand(command string) {
 		return
 	}
 
-	arguments = strings.TrimSpace(arguments)
-	san, _ := helpers.SanetizeSingleQuotes(arguments)
-
-	arguments = san
+	arguments = helpers.SanetizeArguments(arguments)
 
 	if commandHandle, _ := commands.CreateCommand(method, arguments); commandHandle != nil {
 		commandHandle.Execute()
