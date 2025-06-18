@@ -46,7 +46,7 @@ func sanetize(arguments string) []string {
 			continue
 		}
 
-		if char == '\'' && !isInDoubleQuote {
+		if char == '\'' && !isInDoubleQuote && !isBackslash {
 			isInSingleQuote = !isInSingleQuote
 			continue
 		}
