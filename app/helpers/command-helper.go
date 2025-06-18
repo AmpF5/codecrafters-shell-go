@@ -38,15 +38,27 @@ func sanetize(arguments string) []string {
 
 	isInSingleQuote := false
 	isInDoubleQuote := false
+	isBackslash := false
 
 	for _, char := range arguments {
+		if char == '\\' && !isInSingleQuote && !isInDoubleQuote {
+			isBackslash = !isBackslash
+			continue
+		}
+
 		if char == '\'' && !isInDoubleQuote {
 			isInSingleQuote = !isInSingleQuote
 			continue
 		}
 
-		if char == '"' && !isInSingleQuote {
+		if char == '"' && !isInSingleQuote && !isBackslash {
 			isInDoubleQuote = !isInDoubleQuote
+			continue
+		}
+
+		if isBackslash {
+			tokens.WriteRune(char)
+			isBackslash = false
 			continue
 		}
 
