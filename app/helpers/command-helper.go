@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+var escapableCharInDoubleQuote = []rune{'"', '\\', '$', '`'}
+
 func GetPathEntry(method string) (string, bool) {
 	path := os.Getenv("PATH")
 	if path == "" {
@@ -43,7 +45,10 @@ func sanetize(arguments string) []string {
 	for _, char := range arguments {
 		if char == '\\' && !isInSingleQuote && !isBackslash {
 			isBackslash = !isBackslash
-			continue
+
+			if !isInDoubleQuote {
+				continue
+			}
 		}
 
 		if char == '\'' && !isInDoubleQuote && !isBackslash {
