@@ -41,7 +41,7 @@ func sanetize(arguments string) []string {
 	isBackslash := false
 
 	for _, char := range arguments {
-		if char == '\\' && !isInSingleQuote && !isInDoubleQuote {
+		if char == '\\' && !isInSingleQuote && !isBackslash {
 			isBackslash = !isBackslash
 			continue
 		}
