@@ -3,10 +3,11 @@ package helpers
 import (
 	"os"
 	"os/exec"
+	"slices"
 	"strings"
 )
 
-var escapableCharInDoubleQuote = []rune{'"', '\\', '$', '`'}
+var escapeableCharsInDoubleQuotes = []rune{'"', '\\', '$', '`'}
 
 func GetPathEntry(method string) (string, bool) {
 	path := os.Getenv("PATH")
@@ -21,7 +22,6 @@ func GetPathEntry(method string) (string, bool) {
 
 	return file, true
 }
-
 func SanetizeArguments(arguments string) []string {
 	arguments = strings.TrimSpace(arguments)
 	return sanetize(arguments)
@@ -30,6 +30,9 @@ func SanetizeArguments(arguments string) []string {
 func sanetize(arguments string) []string {
 	var tokens strings.Builder
 	var values []string
+	isInSingleQuote := false
+	isInDoubleQuote := false
+	isBackslash := false
 
 	push := func() {
 		if tokens.Len() > 0 {
@@ -38,43 +41,73 @@ func sanetize(arguments string) []string {
 		}
 	}
 
-	isInSingleQuote := false
-	isInDoubleQuote := false
-	isBackslash := false
+	handleBackslash := func(r rune) {
+		if !isBackslash {
+			return
+		}
+
+		if isInDoubleQuote && !slices.Contains(escapeableCharsInDoubleQuotes, r) {
+			tokens.WriteRune('\\')
+		}
+
+		isBackslash = false
+	}
 
 	for _, char := range arguments {
-		if char == '\\' && !isInSingleQuote && !isBackslash {
-			isBackslash = !isBackslash
+		handleBackslash(char)
 
-			if !isInDoubleQuote {
-				continue
+		switch char {
+		case '\\':
+			isBackslash = true
+		case '\'':
+			if isInDoubleQuote {
+				tokens.WriteRune(char)
+			} else {
+				isInSingleQuote = !isInSingleQuote
+			}
+		case '"':
+			isInDoubleQuote = !isInDoubleQuote
+		default:
+			if char == ' ' && (isInSingleQuote || isInDoubleQuote) { // char is whitespace and is inside quotes so we append it
+				tokens.WriteRune(' ')
+			} else if char == ' ' { // char is whitespace but not inside quotes -> new argument
+				push()
+			} else {
+				tokens.WriteRune(char) // char is not whitespace
 			}
 		}
+		// if char == '\\' && !isInSingleQuote && !isBackslash {
+		// 	isBackslash = !isBackslash
 
-		if char == '\'' && !isInDoubleQuote && !isBackslash {
-			isInSingleQuote = !isInSingleQuote
-			continue
-		}
+		// 	if isInDoubleQuote {
+		// 		continue
+		// 	}
+		// }
 
-		if char == '"' && !isInSingleQuote && !isBackslash {
-			isInDoubleQuote = !isInDoubleQuote
-			continue
-		}
+		// if char == '\'' && !isInDoubleQuote && !isBackslash {
+		// 	isInSingleQuote = !isInSingleQuote
+		// 	continue
+		// }
 
-		if isBackslash {
-			tokens.WriteRune(char)
-			isBackslash = false
-			continue
-		}
+		// if char == '"' && !isInSingleQuote && !isBackslash {
+		// 	isInDoubleQuote = !isInDoubleQuote
+		// 	continue
+		// }
 
-		if char == ' ' && (isInSingleQuote || isInDoubleQuote) {
-			tokens.WriteRune(' ')
-			continue
-		} else if char == ' ' {
-			push()
-		} else {
-			tokens.WriteRune(char)
-		}
+		// if isBackslash {
+		// 	tokens.WriteRune(char)
+		// 	isBackslash = false
+		// 	continue
+		// }
+
+		// if char == ' ' && (isInSingleQuote || isInDoubleQuote) {
+		// 	tokens.WriteRune(' ')
+		// 	continue
+		// } else if char == ' ' {
+		// 	push()
+		// } else {
+		// 	tokens.WriteRune(char)
+		// }
 	}
 	push()
 
