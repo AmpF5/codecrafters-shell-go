@@ -8,6 +8,7 @@ import (
 )
 
 var escapeableCharsInDoubleQuotes = []rune{'"', '\\', '$', '`'}
+var quotes = []rune{'"', '\''}
 
 func GetPathEntry(method string) (string, bool) {
 	path := os.Getenv("PATH")
@@ -41,28 +42,46 @@ func sanetize(arguments string) []string {
 		}
 	}
 
-	handleBackslash := func(r rune) {
+	handleBackslash := func(r rune) bool {
 		if !isBackslash {
-			return
+			return false
 		}
 
 		if isInDoubleQuote && !slices.Contains(escapeableCharsInDoubleQuotes, r) {
 			tokens.WriteRune('\\')
 		}
 
+		tokens.WriteRune(r)
 		isBackslash = false
+		return true
 	}
 
+	handleDoubleQuote := func(r rune) bool {
+		if !isInDoubleQuote {
+			return false
+		}
+
+		if r == '\'' {
+			tokens.WriteRune(r)
+			return true
+		}
+
+		return false
+	}
 	for _, char := range arguments {
-		handleBackslash(char)
+		if handled := handleBackslash(char); handled {
+			continue
+		}
+
+		if handled := handleDoubleQuote(char); handled {
+			continue
+		}
 
 		switch char {
 		case '\\':
 			isBackslash = true
 		case '\'':
-			if isInDoubleQuote {
-				tokens.WriteRune(char)
-			} else {
+			if !isInDoubleQuote {
 				isInSingleQuote = !isInSingleQuote
 			}
 		case '"':
@@ -76,38 +95,6 @@ func sanetize(arguments string) []string {
 				tokens.WriteRune(char) // char is not whitespace
 			}
 		}
-		// if char == '\\' && !isInSingleQuote && !isBackslash {
-		// 	isBackslash = !isBackslash
-
-		// 	if isInDoubleQuote {
-		// 		continue
-		// 	}
-		// }
-
-		// if char == '\'' && !isInDoubleQuote && !isBackslash {
-		// 	isInSingleQuote = !isInSingleQuote
-		// 	continue
-		// }
-
-		// if char == '"' && !isInSingleQuote && !isBackslash {
-		// 	isInDoubleQuote = !isInDoubleQuote
-		// 	continue
-		// }
-
-		// if isBackslash {
-		// 	tokens.WriteRune(char)
-		// 	isBackslash = false
-		// 	continue
-		// }
-
-		// if char == ' ' && (isInSingleQuote || isInDoubleQuote) {
-		// 	tokens.WriteRune(' ')
-		// 	continue
-		// } else if char == ' ' {
-		// 	push()
-		// } else {
-		// 	tokens.WriteRune(char)
-		// }
 	}
 	push()
 
