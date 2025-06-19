@@ -47,7 +47,7 @@ func sanetize(arguments string) []string {
 			return false
 		}
 
-		if isInDoubleQuote && !slices.Contains(escapeableCharsInDoubleQuotes, r) {
+		if (isInDoubleQuote && !slices.Contains(escapeableCharsInDoubleQuotes, r)) || isInSingleQuote {
 			tokens.WriteRune('\\')
 		}
 
@@ -68,12 +68,30 @@ func sanetize(arguments string) []string {
 
 		return false
 	}
+
+	handleSingleQuote := func(r rune) bool {
+		if !isInSingleQuote {
+			return false
+		}
+
+		if r == '"' {
+			tokens.WriteRune(r)
+			return true
+		}
+
+		return false
+	}
+
 	for _, char := range arguments {
 		if handled := handleBackslash(char); handled {
 			continue
 		}
 
 		if handled := handleDoubleQuote(char); handled {
+			continue
+		}
+
+		if handled := handleSingleQuote(char); handled {
 			continue
 		}
 
@@ -85,7 +103,9 @@ func sanetize(arguments string) []string {
 				isInSingleQuote = !isInSingleQuote
 			}
 		case '"':
-			isInDoubleQuote = !isInDoubleQuote
+			if !isInSingleQuote {
+				isInDoubleQuote = !isInDoubleQuote
+			}
 		default:
 			if char == ' ' && (isInSingleQuote || isInDoubleQuote) { // char is whitespace and is inside quotes so we append it
 				tokens.WriteRune(' ')
