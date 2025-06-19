@@ -19,17 +19,19 @@ func handleCommand(command string) {
 		return
 	}
 
-	method := parameters[0]
+	method, arguments := helpers.SanetizeCommand(command)
 
-	arguments, found := strings.CutPrefix(command, method)
-	if !found {
-		fmt.Printf("%s: command not found\n", method)
-		return
-	}
+	// method := helpers.SanetizeMethod(command)
 
-	argumentsSanetized := helpers.SanetizeArguments(arguments)
+	// arguments, found := strings.CutPrefix(command, method)
+	// if !found {
+	// 	fmt.Printf("%s: command not found\n", method)
+	// 	return
+	// }
 
-	if commandHandle, _ := commands.CreateCommand(method, argumentsSanetized); commandHandle != nil {
+	// argumentsSanetized := helpers.SanetizeArguments(arguments)
+
+	if commandHandle, _ := commands.CreateCommand(method, arguments); commandHandle != nil {
 		commandHandle.Execute()
 	}
 }

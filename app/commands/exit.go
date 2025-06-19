@@ -13,7 +13,7 @@ func CreateExitCommand(query []string) *exitCommand {
 
 	num, err := strconv.Atoi(query[0])
 	if err != nil {
-		panic("Invalid parameter for exit command, use 0 to exit")
+		panic("Error while parsing arguments")
 	}
 
 	return &exitCommand{number: num}

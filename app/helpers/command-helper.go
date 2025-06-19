@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"slices"
@@ -23,6 +24,23 @@ func GetPathEntry(method string) (string, bool) {
 
 	return file, true
 }
+
+func SanetizeCommand(command string) (method string, arguments []string) {
+	command = strings.TrimSpace(command)
+	sanetizedCommand := sanetize(command)
+
+	// fmt.Printf("sanetizedMethod: %v\n", strings.Join(sanetizedCommand, ", "))
+	// fmt.Printf("method: %v\n", sanetizedCommand[0])
+	// fmt.Printf("arguments[0:]: %v\n", strings.Join(sanetizedCommand[1:], ", "))
+	return sanetizedCommand[0], sanetizedCommand[1:]
+}
+
+func SanetizeMethod(method string) string {
+	fmt.Printf("method: %v\n", method)
+	sanetizedMethod := sanetize(method)
+	return sanetizedMethod[0]
+}
+
 func SanetizeArguments(arguments string) []string {
 	arguments = strings.TrimSpace(arguments)
 	return sanetize(arguments)
